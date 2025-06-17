@@ -5,18 +5,25 @@ from pathlib import Path
 CONFIG_DIR = Path(user_config_dir("lazyrun"))
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
-CURRENT_VERSION = 2
+CURRENT_VERSION = 3
 
 def _migrate(data: dict) -> dict:
     """Upgrade old shortcut formats to latest versioned format."""
+    # ensure our meta block exists and has a groups dict
     if "_meta" not in data:
-        data["_meta"] = {"version": CURRENT_VERSION}
-    
+        data["_meta"] = {
+            "version": CURRENT_VERSION,
+            "groups": {},
+        }
+    else:
+        data["_meta"].setdefault("groups", {})
+
+    # migrate each entry
     for name, entry in list(data.items()):
         if name == "_meta":
             continue
         if isinstance(entry, str):
-            # Old format: string command
+            # old: bare string → full entry
             data[name] = {
                 "cmd": entry,
                 "tags": [],
@@ -24,12 +31,12 @@ def _migrate(data: dict) -> dict:
                 "version-set": CURRENT_VERSION
             }
         elif isinstance(entry, dict):
-            # Partial migration or outdated
             entry.setdefault("cmd", "")
             entry.setdefault("tags", [])
             entry.setdefault("groups", [])
             entry["version-set"] = CURRENT_VERSION
 
+    # bump meta version
     data["_meta"]["version"] = CURRENT_VERSION
     return data
 
