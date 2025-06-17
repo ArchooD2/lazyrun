@@ -145,6 +145,18 @@ def cli():
         elif args.subcommand == "list":
             tags = entry.get("tags", []) if entry else []
             print(f"Tags for '{args.name}': {', '.join(tags) or 'None'}")
+        
+        elif args.subcommand == "list-tags":
+            if not shortcuts:
+                return print("No shortcuts saved.")
+            print("All tags in use:")
+            all_tags = set()
+            for entry in shortcuts.values():
+                if isinstance(entry, dict):
+                    all_tags.update(entry.get("tags", []))
+            if not all_tags:
+                return print("No tags found.")
+            print(", ".join(sorted(all_tags)))
 
         elif args.subcommand == "run":
             # find and run by tag
@@ -211,6 +223,13 @@ def cli():
             print(f"Commands in group '{args.group}' (in order):")
             for n in grp_list:
                 print(f"  - {n}")
+        
+        elif args.subcommand == "list-groups":
+            if not group_meta:
+                return print("No groups defined.")
+            print("Defined groups:")
+            for group, commands in group_meta.items():
+                print(f"  {group}: {', '.join(commands) if commands else 'No commands'}")
 
         elif args.subcommand == "run":
             grp_list = group_meta.get(args.group, [])
