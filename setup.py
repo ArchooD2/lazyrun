@@ -7,7 +7,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="lazyrun",
-    version="0.3.1",
+    version="0.3.3",
     author="PJ H.",
     author_email="archood2@gmail.com",
     description="Task Runner With Memory: Save and run your most-used shell commands as one-word shortcuts.",

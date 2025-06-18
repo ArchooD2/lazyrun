@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LazyRun Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <main class="container">
+    <h1>🌟 LazyRun Shortcuts</h1>
+
+    <form class="shortcut-form" action="{{ url_for('add') }}" method="post">
+        <input 
+    type="hidden" 
+    name="csrf_token" 
+    value="{{ csrf_token() }}" 
+  />
+      <input type="text" name="name" placeholder="Shortcut Name" required />
+      <input type="text" name="cmd"  placeholder="Command (e.g. git pull origin main)" required />
+      <button type="submit">Add ✚</button>
+    </form>
+
+    <ul class="shortcut-list">
+      {% for name, entry in shortcuts.items() %}
+      <li>
+        <div class="info">
+          <strong>{{ name }}</strong>
+          <code>{{ entry.cmd }}</code>
+        </div>
+        <a
+          class="delete"
+          href="{{ url_for('delete', name=name) }}"
+          onclick="return confirm('Delete shortcut ‘{{ name }}’?');"
+        >
+          Delete
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </main>
+</body>
+</html>

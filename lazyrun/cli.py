@@ -91,6 +91,9 @@ def cli():
     group_run = group_sub.add_parser("run", help="Run all commands in a group")
     group_run.add_argument("group")
     
+    # --- lrgui ---
+    gui_p = subs.add_parser("lrgui", help="Launch the LazyRun web dashboard.")
+    gui_p.add_argument("--port", type=int, default=5000, help="Port to run the dashboard on")
     args = parser.parse_args()
 
     # --- save ---
@@ -243,3 +246,8 @@ def cli():
                 cmd = entry.get("cmd", "") if isinstance(entry, dict) else entry
                 print(f"   • {n}: {cmd}")
                 subprocess.run(cmd, shell=True)
+        # --- lrgui ---
+    elif args.command == "lrgui":
+        from .webui import app
+        print(f"🌐 | Starting LazyRun Web UI at http://127.0.0.1:{args.port}/")
+        app.run(debug=True, port=args.port)
